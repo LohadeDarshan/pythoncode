@@ -10,7 +10,7 @@ pipeline {
             steps {
                 sh '''
                     python3 --version
-                    python3 -m py_compile app.py
+                    python3 -m py_compile test.py
                 '''
             }
         }
@@ -18,7 +18,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh '''
-                    python3 test_app.py
+                    python3 test.py
                 '''
             }
         }
