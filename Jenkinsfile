@@ -21,7 +21,7 @@ pipeline {
                 '''
             }
         }
-        stage('Code Scan') {
+        stage('Sonaywube Analysis') {
             steps {
                 script {
                     def scannerHome = tool 'sonar'
@@ -51,19 +51,16 @@ pipeline {
                 }
             }
         }
-        stage('Docker Build and Run (Remote Server)') {
+        stage('Run Docker Container on Remote Server') {
             steps {
-                sshagent(credentials: ['DevCICD']) {
+                sshagent(['DevCICD']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no root@10.153.75.210 << EOF
-                        
-                        docker stop python-html-app || true
-                        docker rm python-html-app || true
-                        
-                        docker pull myserverd/python-html-app:latest
-
+                        ssh -o StrictHostKeyChecking=no root@10.153.75.210 "
+                        docker stop python-html-app || true &&
+                        docker rm python-html-app || true &&
+                        docker pull myserverd/python-html-app:latest &&
                         docker run -d --name python-html-app -p 8000:8000 myserverd/python-html-app:latest
-                        EOF
+                        "
                     '''
                 }
             }
