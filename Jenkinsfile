@@ -14,7 +14,6 @@ pipeline {
                 '''
             }
         }
-
         stage('Test') {
             steps {
                 sh '''
@@ -38,20 +37,36 @@ pipeline {
                 }
             }
         }
+        stage('Build Docker Image (Python App)') {
+            steps {
+                sh '''
+                  docker build -t myserverd/python-html-app:latest .
+             '''
+            }
+        }
+        stage('push docker image to dockerhub') {
+            steps {
+                withDockerRegistry(credentialsId: 'dockerHubCred', url: 'https://index.docker.io/v1/') {
+                    sh 'docker push myserverd/python-html-app:latest'
+                }
+            }
+        }
         stage('Docker Build and Run (Remote Server)') {
             steps {
                 sshagent(credentials: ['DevCICD']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no root@10.153.75.210 << EOF
+                        
                         docker stop python-html-app || true
                         docker rm python-html-app || true
+                        
+                        docker pull myserverd/python-html-app:latest
 
-                        docker build -t python-html-app .
                         docker run -d --name python-html-app -p 8000:8000 python-html-app
                         EOF
                     '''
                 }
-             }
+            }
         }
     }
 }
