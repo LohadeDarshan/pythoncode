@@ -38,5 +38,20 @@ pipeline {
                 }
             }
         }
+        stage('Docker Build and Run (Remote Server)') {
+            steps {
+                sshagent(credentials: ['docker-remote-ssh']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no root@10.153.75.210 << EOF
+                        docker stop python-html-app || true
+                        docker rm python-html-app || true
+
+                        docker build -t python-html-app .
+                        docker run -d --name python-html-app -p 8000:8000 python-html-app
+                        EOF
+                    '''
+                }
+             }
+        }
     }
 }
