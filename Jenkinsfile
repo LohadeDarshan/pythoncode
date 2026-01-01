@@ -62,7 +62,7 @@ pipeline {
                         
                         docker pull myserverd/python-html-app:latest
 
-                        docker run -d --name python-html-app -p 8000:8000 python-html-app
+                        docker run -d --name python-html-app -p 8000:8000 myserverd/python-html-app:latest
                         EOF
                     '''
                 }
