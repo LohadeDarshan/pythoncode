@@ -22,12 +22,11 @@ pipeline {
                 '''
             }
         }
-
-        stage('Docker Build') {
+        stage('Code Scan') {
             steps {
-                sh '''
-                    docker build -t python-html-app .
-                '''
+                withSonarQubeEnv(credentialsId: 'sonar-token', installationName: 'sonar') {
+                    sh 'sonar-scanner'
+                }
             }
         }
     }
