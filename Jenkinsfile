@@ -24,8 +24,17 @@ pipeline {
         }
         stage('Code Scan') {
             steps {
-                withSonarQubeEnv(credentialsId: 'sonar-token', installationName: 'sonar') {
-                    sh 'sonar-scanner'
+                script {
+                    def scannerHome = tool 'sonar'
+                    withSonarQubeEnv('sonar') {
+                        sh """
+                        ${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=python-project \
+                        -Dsonar.projectName=Python-Project \
+                        -Dsonar.sources=. \
+                        -Dsonar.language=py
+                        """
+                    }
                 }
             }
         }
