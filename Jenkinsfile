@@ -40,7 +40,7 @@ pipeline {
         }
         stage('Docker Build and Run (Remote Server)') {
             steps {
-                sshagent(credentials: ['docker-remote-ssh']) {
+                sshagent(credentials: ['DevCICD']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no root@10.153.75.210 << EOF
                         docker stop python-html-app || true
